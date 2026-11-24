@@ -78,6 +78,7 @@ if ($action === 'create') {
         'catatan'      => $catatan !== '' ? $catatan : null,
     ]);
 
+    db_sync_if_cloud();
     set_flash(
         'success',
         "Transaksi {$kodeTransaksi} atas nama {$namaPelanggan} (" . $layanan['nama_layanan'] . ', ' . rupiah($totalHarga) . ') berhasil dicatat.'
@@ -120,6 +121,7 @@ if ($action === 'update_status') {
         ]);
     }
 
+    db_sync_if_cloud();
     set_flash('success', "Status transaksi berhasil diperbarui menjadi \"{$newStatus}\".");
     redirect('../transaksi.php');
 }
@@ -139,6 +141,7 @@ if ($action === 'delete') {
     $stmt = $pdo->prepare('DELETE FROM transaksi WHERE id = :id');
     $stmt->execute(['id' => $id]);
 
+    db_sync_if_cloud();
     set_flash('success', 'Data transaksi berhasil dihapus.');
     redirect('../transaksi.php');
 }

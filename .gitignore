@@ -2,6 +2,7 @@
 .agents/
 .taste-skill/
 skills-lock.json
+docs/upload_drive/
 .env
 *.sqlite
 *.db

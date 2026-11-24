@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'role'     => $roleInput,
             ]);
 
+            db_sync_if_cloud();
             set_flash('success', "Akun \"{$usernameInput}\" berhasil dibuat. Silakan masuk.");
             redirect('login.php');
         } catch (PDOException $e) {

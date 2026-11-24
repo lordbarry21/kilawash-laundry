@@ -51,6 +51,7 @@ if ($action === 'create') {
             'deskripsi' => $deskripsi !== '' ? $deskripsi : null,
         ]);
 
+        db_sync_if_cloud();
         set_flash('success', "Layanan \"{$nama}\" (" . rupiah($harga) . "/kg) berhasil ditambahkan.");
     } catch (PDOException $e) {
         if (($e->errorInfo[1] ?? 0) === 1062 || str_contains($e->getMessage(), 'UNIQUE')) {
@@ -95,6 +96,7 @@ if ($action === 'update') {
             'deskripsi' => $deskripsi !== '' ? $deskripsi : null,
         ]);
 
+        db_sync_if_cloud();
         set_flash('success', "Data layanan \"{$nama}\" berhasil diperbarui.");
     } catch (PDOException $e) {
         if (($e->errorInfo[1] ?? 0) === 1062 || str_contains($e->getMessage(), 'UNIQUE')) {
@@ -122,6 +124,7 @@ if ($action === 'delete') {
         $stmt->execute(['id' => $id]);
 
         if ($stmt->rowCount() > 0) {
+            db_sync_if_cloud();
             set_flash('success', 'Data layanan berhasil dihapus.');
         } else {
             set_flash('info', 'Data layanan tidak ditemukan.');

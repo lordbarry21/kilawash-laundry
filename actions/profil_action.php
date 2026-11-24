@@ -84,6 +84,7 @@ if ($action === 'update_profile') {
             'id'       => $userId,
         ]);
 
+        db_sync_if_cloud();
         refresh_current_user_session($userId);
         set_flash('success', 'Profil akun berhasil diperbarui.');
     } catch (PDOException $e) {
@@ -131,6 +132,7 @@ if ($action === 'update_password') {
         'id'   => $userId,
     ]);
 
+    db_sync_if_cloud();
     set_flash('success', 'Kata sandi berhasil diperbarui.');
     redirect('../profil.php');
 }
