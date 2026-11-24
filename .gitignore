@@ -1,0 +1,10 @@
+# Local agent skills & temporary files (tidak perlu ikut ke repo proyek)
+.agents/
+.taste-skill/
+skills-lock.json
+.env
+*.sqlite
+*.db
+*.log
+.DS_Store
+Thumbs.db

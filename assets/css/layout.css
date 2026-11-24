@@ -1,0 +1,691 @@
+/* ============================================================================
+ * FILE: assets/css/layout.css
+ * FUNGSI: Tata letak Shell Dashboard (Sidebar Desktop, Topbar, Mobile Drawer
+ *         berbasis <dialog> + scroll-snap), Halaman Login, Struk, dan Print.
+ * ============================================================================ */
+
+/* ----------------------------------------------------------------------------
+ * 1. SKIP LINK (Aksesibilitas Keyboard)
+ * ---------------------------------------------------------------------------- */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: var(--r-sm);
+  background-color: var(--ink);
+  color: #ffffff;
+  font-weight: 500;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* ----------------------------------------------------------------------------
+ * 2. APP SHELL (Sidebar tetap di Desktop >= 960px + Konten Utama)
+ * ---------------------------------------------------------------------------- */
+.app-shell {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) minmax(0, 1fr);
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  background-color: var(--card);
+  border-right: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  padding: var(--s-5);
+  gap: var(--s-6);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  padding: 4px 4px;
+}
+
+.brand__mark {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--r-sm);
+  background-color: var(--accent);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.brand__mark svg {
+  width: 20px;
+  height: 20px;
+}
+
+.brand__name {
+  display: block;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  line-height: 1.15;
+}
+
+.brand__sub {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Daftar Menu Navigasi */
+.nav-list {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-section-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 0 var(--s-3) var(--s-2);
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-height: 44px;
+  padding: 0 var(--s-3);
+  border-radius: var(--r-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--muted);
+  transition: background-color var(--m-out) var(--ease), color var(--m-out) var(--ease);
+}
+
+.nav-link svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .nav-link:hover {
+    background-color: var(--surface);
+    color: var(--ink);
+  }
+}
+
+.nav-link[aria-current="page"] {
+  background-color: var(--accent-soft);
+  color: var(--accent-ink);
+}
+
+.sidebar__footer {
+  margin-top: auto;
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-3);
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.user-pill--link {
+  padding: 6px;
+  margin: -6px;
+  border-radius: var(--r-sm);
+  transition: background-color var(--m-out) var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .user-pill--link:hover {
+    background-color: var(--surface);
+  }
+}
+
+.user-pill__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--r-sm);
+  background-color: var(--surface);
+  color: var(--ink);
+  font-weight: 500;
+  font-size: var(--t-small);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.user-pill__avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  flex-wrap: wrap;
+}
+
+.profile-avatar-lg {
+  width: 76px;
+  height: 76px;
+  border-radius: var(--r-md);
+  background-color: var(--accent-soft);
+  color: var(--accent-ink);
+  border: 1px solid var(--hairline);
+  font-size: 1.75rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.profile-avatar-lg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.user-pill__info {
+  min-width: 0;
+}
+
+.user-pill__name {
+  font-size: var(--t-small);
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-pill__role {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+/* Area Konten Utama + Topbar */
+.app-main-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  min-height: var(--topbar-h);
+  background-color: var(--card);
+  border-bottom: 1px solid var(--hairline);
+  padding: var(--s-3) var(--s-8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  min-width: 0;
+}
+
+.topbar__title {
+  font-size: 1.125rem;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topbar__menu-btn {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--hairline-strong);
+  background-color: var(--card);
+  color: var(--ink);
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.app-content {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-8) var(--s-10);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-6);
+}
+
+.page-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-4);
+}
+
+.page-head__title {
+  font-size: var(--t-h1);
+  color: var(--ink);
+}
+
+.page-head__desc {
+  color: var(--muted);
+  font-size: var(--t-small);
+  margin-top: 4px;
+}
+
+/* Grid 2 Kolom untuk Dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr);
+  gap: var(--s-6);
+  align-items: start;
+}
+
+@media (max-width: 1080px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Breakpoint Mobile/Tablet (< 960px): Sidebar disembunyikan, Drawer aktif */
+@media (max-width: 959px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .topbar {
+    padding: var(--s-3) var(--s-4);
+  }
+
+  .topbar__menu-btn {
+    display: inline-flex;
+  }
+
+  .app-content {
+    padding: var(--s-5) var(--s-4) var(--s-8);
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * 3. MOBILE NAVIGATION DRAWER (modern-web-guidance: navigation-drawer)
+ *    - Modal <dialog> + CSS horizontal scroll-snap + scroll-driven backdrop
+ * ---------------------------------------------------------------------------- */
+dialog.drawer {
+  --drawer-width: min(18.5rem, 82dvw, 100dvw - 24px);
+  --drawer-backdrop: 0;
+
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  overflow: visible;
+}
+
+dialog.drawer::backdrop {
+  background: #0f1d24;
+  opacity: calc(var(--drawer-backdrop) * 0.5);
+}
+
+.drawer-scroller {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--drawer-width) 100%;
+  overflow-x: scroll;
+  overscroll-behavior: none;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+
+.drawer-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .drawer-scroller {
+    scroll-behavior: smooth;
+  }
+}
+
+.drawer-scroller::after {
+  content: '';
+  scroll-snap-align: end;
+  scroll-initial-target: nearest;
+}
+
+.drawer-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+  height: 100svh;
+  padding: var(--s-5);
+  background-color: var(--card);
+  color: var(--ink);
+  border-right: 1px solid var(--hairline);
+  overflow-y: auto;
+  scroll-snap-align: start;
+  scrollbar-width: none;
+}
+
+.drawer-sheet__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-2);
+}
+
+/* Gate dengan @supports agar browser tanpa animation-timeline tidak memblokir opacity */
+@supports (animation-timeline: scroll()) {
+  dialog.drawer {
+    timeline-scope: --drawer-fade;
+    animation: fade-drawer-backdrop linear both;
+    animation-timeline: --drawer-fade;
+  }
+
+  .drawer-scroller {
+    scroll-timeline: --drawer-fade x;
+  }
+
+  @property --drawer-backdrop {
+    syntax: '<number>';
+    inherits: true;
+    initial-value: 0;
+  }
+
+  @keyframes fade-drawer-backdrop {
+    0%   { --drawer-backdrop: 1; }
+    100% { --drawer-backdrop: 0; }
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * 4. HALAMAN LOGIN (Split Layout Bersih)
+ * ---------------------------------------------------------------------------- */
+.login-page {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  background-color: var(--bg);
+}
+
+.login-aside {
+  background-color: var(--ink);
+  color: #f7f9fa;
+  padding: clamp(2rem, 5vw, 4rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--s-8);
+}
+
+.login-aside__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-3);
+}
+
+.login-aside__heading {
+  font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
+  line-height: 1.15;
+  max-width: 18ch;
+  color: #ffffff;
+}
+
+.login-aside__lead {
+  color: rgba(247, 249, 250, 0.78);
+  max-width: 44ch;
+  margin-top: var(--s-4);
+}
+
+.login-rates {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-3);
+  margin-top: var(--s-6);
+}
+
+.login-rate-item {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--r-sm);
+  padding: var(--s-4);
+}
+
+.login-rate-item__name {
+  font-size: var(--t-label);
+  color: rgba(247, 249, 250, 0.76);
+}
+
+.login-rate-item__price {
+  font-size: 1.0625rem;
+  font-weight: 500;
+  margin-top: 4px;
+  color: #ffffff;
+}
+
+.login-rate-item__eta {
+  font-size: 0.75rem;
+  color: #7dd3dc;
+  margin-top: 2px;
+}
+
+.login-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--s-6);
+}
+
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  background-color: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-lg);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-5);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.demo-box {
+  padding-top: var(--s-4);
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+}
+
+.demo-box__title {
+  font-size: var(--t-label);
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.demo-box__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--s-2);
+}
+
+.demo-chip {
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--hairline);
+  background-color: var(--bg);
+  cursor: pointer;
+  transition: border-color var(--m-in) var(--ease), background-color var(--m-in) var(--ease);
+}
+
+.demo-chip:hover {
+  border-color: var(--accent);
+  background-color: var(--accent-soft);
+}
+
+.demo-chip__role {
+  display: block;
+  font-size: var(--t-label);
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.demo-chip__cred {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+@media (max-width: 900px) {
+  .login-page {
+    grid-template-columns: 1fr;
+  }
+
+  /* Di layar HP, form login di atas agar tombol Masuk tidak tertutup keyboard */
+  .login-main {
+    order: -1;
+    padding: var(--s-5) var(--s-4);
+  }
+
+  .login-aside {
+    padding: var(--s-6) var(--s-4);
+  }
+
+  .login-rates {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ----------------------------------------------------------------------------
+ * 5. STRUK / NOTA CETAK & @media print
+ * ---------------------------------------------------------------------------- */
+.receipt-shell {
+  min-height: 100dvh;
+  padding: var(--s-6) var(--s-4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-4);
+}
+
+.receipt-card {
+  width: 100%;
+  max-width: 460px;
+  background-color: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: var(--r-md);
+  padding: var(--s-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-4);
+}
+
+.receipt-head {
+  text-align: center;
+  padding-bottom: var(--s-4);
+  border-bottom: 1px dashed var(--hairline-strong);
+}
+
+.receipt-rows {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  font-size: var(--t-small);
+}
+
+.receipt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--s-3);
+}
+
+.receipt-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--s-3);
+  border-top: 1px dashed var(--hairline-strong);
+  font-size: 1.125rem;
+  font-weight: 500;
+}
+
+@media print {
+  .sidebar,
+  .topbar,
+  .no-print,
+  dialog.drawer,
+  dialog.modal {
+    display: none !important;
+  }
+
+  .app-shell {
+    display: block;
+  }
+
+  .app-content {
+    max-width: none;
+    padding: 0;
+  }
+
+  body {
+    background: #ffffff;
+  }
+
+  .card,
+  .kpi-card,
+  .receipt-card {
+    box-shadow: none;
+    border-color: #cbd5e1;
+  }
+}
