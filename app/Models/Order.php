@@ -10,7 +10,12 @@ class Order extends Model
 {
     use HasFactory;
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'customer_name',
+        'whatsapp_number',
+        'total_price',
+        'status',
+    ];
 
     public function orderDetails(): HasMany
     {

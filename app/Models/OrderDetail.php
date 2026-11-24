@@ -12,7 +12,12 @@ class OrderDetail extends Model
 
     protected $table = 'order_details';
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'order_id',
+        'service_id',
+        'qty_or_weight',
+        'subtotal',
+    ];
 
     public function service(): BelongsTo
     {

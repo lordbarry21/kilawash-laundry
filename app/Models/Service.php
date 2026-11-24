@@ -12,7 +12,13 @@ class Service extends Model
 
     protected $table = 'services';
 
-    protected $guarded = ['id'];
+    protected $fillable = [
+        'service_name',
+        'category',
+        'price_per_unit',
+        'unit_type',
+        'description',
+    ];
 
     public function orderDetails(): HasMany
     {
