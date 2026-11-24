@@ -42,11 +42,11 @@
                 <div class="flex items-center justify-between gap-3">
                     <div>
                         <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#141416]">Alur Pesanan</h2>
-                        <p class="text-xs text-[#71717a] mt-0.5">Distribusi langsung status cucian dari tabel <code>orders</code></p>
+                        <p class="text-xs text-[#71717a] mt-0.5">Distribusi langsung status cucian yang sedang diproses</p>
                     </div>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f4f4f6] text-xs font-medium text-[#52525b]">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#2563eb]"></span>
-                        Live MySQL
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#f4f4f6] text-xs font-medium text-[#52525b] whitespace-nowrap shrink-0">
+                        <span class="w-1.5 h-1.5 rounded-full bg-[#2563eb] shrink-0"></span>
+                        Live Sync
                     </span>
                 </div>
 
