@@ -15,8 +15,19 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->report(function (Throwable $e): void {
-            error_log('KILAWASH_ERR: ' . get_class($e) . ': ' . $e->getMessage() . ' @ ' . $e->getFile() . ':' . $e->getLine());
+        $exceptions->report(function (Throwable $e): bool {
+            @file_put_contents(
+                'php://stderr',
+                sprintf(
+                    "KILAWASH_ERR %s: %s @ %s:%d\n",
+                    get_class($e),
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine()
+                )
+            );
+
+            return false;
         });
 
         $exceptions->shouldRenderJsonWhen(
