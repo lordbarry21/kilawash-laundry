@@ -32,6 +32,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+}
+
 .font-mono-num {
   font-family: var(--font-mono);
   font-variant-numeric: tabular-nums;

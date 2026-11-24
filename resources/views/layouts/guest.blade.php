@@ -57,14 +57,7 @@
                 <div class="absolute inset-0 z-10"
                      style="background: linear-gradient(180deg, rgba(16,18,22,0.34) 0%, rgba(16,18,22,0.22) 40%, rgba(16,18,22,0.82) 78%, rgba(16,18,22,0.94) 100%);"></div>
 
-                <div class="relative z-20 flex items-center justify-between">
-                    <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/45 border border-white/15 backdrop-blur-md text-xs font-medium text-white/95">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#22c55e]"></span>
-                        Sistem Manajemen Laundry
-                    </span>
-                </div>
-
-                <div class="relative z-20 space-y-5 max-w-xl">
+                <div class="relative z-20 flex-1 flex flex-col justify-end space-y-5 max-w-xl">
                     <h1 class="text-3xl xl:text-[42px] font-medium tracking-[-0.035em] leading-[1.1] max-w-[16ch] text-white">
                         Operasional laundry modern dalam satu kendali.
                     </h1>
