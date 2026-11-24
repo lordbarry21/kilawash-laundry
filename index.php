@@ -63,20 +63,34 @@ $activeMenu = 'dashboard';
 require __DIR__ . '/includes/layout_top.php';
 ?>
 
-<!-- 1. Header Halaman -->
-<div class="page-head">
-  <div>
-    <h1 class="page-head__title">Ringkasan Operasional</h1>
-    <p class="page-head__desc">Pantau antrean cucian, status pengerjaan, dan pendapatan usaha laundry secara langsung.</p>
+<!-- 1. Hero Editorial Dashboard -->
+<section class="dashboard-hero" aria-labelledby="dashboard-hero-title">
+  <div class="dashboard-hero__content">
+    <div>
+      <span class="dashboard-hero__eyebrow">
+        <?= (int) ($kpi['sedang_berjalan'] ?? 0) ?> antrean cucian aktif hari ini
+      </span>
+      <h1 class="dashboard-hero__title" id="dashboard-hero-title">
+        Halo, <?= e(current_user()['nama'] ?? 'Admin') ?>
+      </h1>
+      <p class="dashboard-hero__desc">
+        Pantau antrean cucian, status pengerjaan dari Masuk hingga Selesai, dan rekap pendapatan usaha laundry secara langsung.
+      </p>
+    </div>
+
+    <div class="btn-group">
+      <a href="transaksi.php?new=1" class="btn btn--primary">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span>Transaksi Baru</span>
+      </a>
+      <a href="laporan.php" class="btn btn--secondary">Lihat Laporan</a>
+    </div>
   </div>
-  <div class="btn-group">
-    <a href="transaksi.php?new=1" class="btn btn--primary">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      <span>Transaksi Baru</span>
-    </a>
-    <a href="laporan.php" class="btn btn--secondary">Lihat Laporan</a>
+
+  <div class="dashboard-hero__media">
+    <img src="assets/img/laundry-banner.jpg" alt="Tumpukan handuk dan kemeja bersih terlipat rapi di meja laundry" fetchpriority="high">
   </div>
-</div>
+</section>
 
 <!-- 2. Grid 4 Kartu KPI -->
 <section class="kpi-grid" aria-label="Statistik utama laundry">
