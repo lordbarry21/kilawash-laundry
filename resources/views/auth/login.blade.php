@@ -37,7 +37,7 @@
                 <input id="remember_me" type="checkbox" name="remember" class="rounded border-black/25 text-[#141416] focus:ring-[#2563eb]">
                 <span>Ingat saya</span>
             </label>
-            <a href="{{ route('customer.index') }}" class="text-[#141416] hover:underline font-medium">Kembali ke Pemesanan</a>
+            <span class="text-[#a1a1aa]">Sesi aman terenkripsi</span>
         </div>
 
         <button type="submit" class="btn-ink w-full mt-2">

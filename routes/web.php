@@ -6,13 +6,24 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServiceController;
 use Illuminate\Support\Facades\Route;
 
-// 1. Halaman Publik Pelanggan & ERD Interaktif
-Route::get('/', [OrderController::class, 'index'])->name('customer.index');
-Route::post('/checkout', [OrderController::class, 'store'])->name('customer.checkout');
+// 1. Entry Point Utama: Wajib login terlebih dahulu sebelum masuk aplikasi
+Route::get('/', function () {
+    if (! auth()->check()) {
+        return redirect()->route('login');
+    }
+
+    return auth()->user()->can('operate-laundry')
+        ? redirect()->route('dashboard')
+        : redirect()->route('customer.index');
+})->name('home');
+
+// Route Rahasia ERD (hanya diakses langsung via /erd, tidak ditampilkan di UI)
 Route::get('/erd', [ErdController::class, 'index'])->name('erd.index');
 
-// 2. Profil Akun (Semua Pengguna Terautentikasi)
+// 2. Area Pengguna Terautentikasi (Pemesanan & Profil)
 Route::middleware('auth')->group(function () {
+    Route::get('/pemesanan', [OrderController::class, 'index'])->name('customer.index');
+    Route::post('/checkout', [OrderController::class, 'store'])->name('customer.checkout');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

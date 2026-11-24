@@ -121,26 +121,31 @@
                 </nav>
             </div>
 
-            <!-- Outlet Info Footer -->
+            <!-- Account & Outlet Footer -->
             <div class="pt-4 border-t border-black/[0.06] space-y-2.5">
-                <div class="rounded-xl bg-[#f4f4f6] p-3.5 space-y-1">
-                    <p class="text-xs font-semibold text-[#141416] flex items-center gap-1.5">
-                        <span class="w-1.5 h-1.5 rounded-full bg-[#16a34a]"></span>
-                        Buka Hari Ini
-                    </p>
-                    <p class="text-[11px] text-[#52525b] font-mono-num">07:00 – 21:00 WIB</p>
-                    <p class="text-[11px] text-[#71717a]">Jl. Melati Raya, Sukmajaya</p>
-                </div>
+                <a href="{{ route('profile.edit') }}"
+                   class="flex items-center gap-3 p-2 rounded-xl hover:bg-[#f4f4f6] transition">
+                    <span class="w-9 h-9 rounded-full bg-[#141416] text-white text-xs font-semibold inline-flex items-center justify-center overflow-hidden shrink-0">
+                        @if(Auth::user()->avatar)
+                            <img src="{{ Auth::user()->avatar }}" alt="" class="w-full h-full object-cover">
+                        @else
+                            {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                        @endif
+                    </span>
+                    <span class="min-w-0 leading-tight">
+                        <span class="block text-xs font-semibold text-[#141416] truncate">{{ Auth::user()->name }}</span>
+                        <span class="block text-[11px] text-[#71717a] truncate">{{ Auth::user()->email }}</span>
+                    </span>
+                </a>
 
-                @guest
-                    <a href="{{ route('login') }}" class="btn-ink w-full !min-h-[40px] !text-xs">
-                        Masuk Petugas
-                    </a>
-                @else
-                    <a href="{{ auth()->user()->can('operate-laundry') ? route('dashboard') : route('profile.edit') }}" class="btn-ink w-full !min-h-[40px] !text-xs">
-                        {{ auth()->user()->can('operate-laundry') ? 'Buka Dashboard' : Auth::user()->name }}
-                    </a>
-                @endguest
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit"
+                            class="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl border border-black/[0.08] bg-white hover:bg-[#f4f4f6] text-xs font-medium text-[#52525b] hover:text-[#141416] transition">
+                        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                        Keluar
+                    </button>
+                </form>
             </div>
         </aside>
 
