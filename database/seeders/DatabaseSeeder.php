@@ -2,103 +2,91 @@
 
 namespace Database\Seeders;
 
-use App\Models\Order;
-use App\Models\Service;
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     public function run(): void
     {
-        // 1. Akun Admin (Bari Achmad)
-        $admin = User::firstOrCreate(['email' => 'admin@gmail.com'], [
-            'name'     => 'Bari Achmad (Admin)',
-            'password' => Hash::make('password123'),
-            'is_admin' => true,
-            'role'     => 'admin',
-        ]);
+        $firebaseUrl = rtrim((string) env('FIREBASE_DB_URL', 'https://laundry-asas-default-rtdb.asia-southeast1.firebasedatabase.app'), '/');
 
-        if (! $admin->is_admin || $admin->role !== 'admin') {
-            $admin->is_admin = true;
-            $admin->role     = 'admin';
-            $admin->save();
+        try {
+            $response = Http::timeout(10)->get($firebaseUrl . '/laravel_db.json');
+            $snapshot = $response->successful() ? $response->json() : null;
+        } catch (\Throwable) {
+            $snapshot = null;
         }
 
-        // 2. Akun Kasir (untuk uji perbedaan role Admin vs Kasir)
-        $kasir = User::firstOrCreate(['email' => 'kasir@gmail.com'], [
-            'name'     => 'Rina Wulandari (Kasir)',
-            'password' => Hash::make('password123'),
-            'is_admin' => false,
-            'role'     => 'kasir',
-        ]);
-
-        if ($kasir->role !== 'kasir') {
-            $kasir->role = 'kasir';
-            $kasir->save();
-        }
-
-        // 3. Seed Layanan Standar
-        if (! Service::exists()) {
+        if (! is_array($snapshot) || empty($snapshot['users']) || empty($snapshot['services'])) {
             $this->call(ServiceSeeder::class);
+            return;
         }
 
-        // 4. Seed Contoh Pesanan Awal agar Dashboard & Laporan langsung hidup
-        if (! Order::exists()) {
-            $reguler = Service::where('service_name', 'Cuci Kering Setrika Reguler')->first();
-            $express = Service::where('service_name', 'Cuci Kilat Express 4 Jam')->first();
-            $jas     = Service::where('service_name', 'Dry Cleaning Jas / Blazer')->first();
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        DB::table('order_details')->truncate();
+        DB::table('orders')->truncate();
+        DB::table('services')->truncate();
+        DB::table('users')->truncate();
 
-            if ($reguler && $jas) {
-                $o1 = Order::create([
-                    'customer_name'   => 'Dina Putri',
-                    'whatsapp_number' => '081234567890',
-                    'total_price'     => ($reguler->price_per_unit * 2) + ($jas->price_per_unit * 1),
-                    'status'          => 'Antrean',
-                ]);
-                $o1->orderDetails()->create([
-                    'service_id'    => $reguler->id,
-                    'qty_or_weight' => 2,
-                    'subtotal'      => $reguler->price_per_unit * 2,
-                ]);
-                $o1->orderDetails()->create([
-                    'service_id'    => $jas->id,
-                    'qty_or_weight' => 1,
-                    'subtotal'      => $jas->price_per_unit * 1,
-                ]);
-            }
-
-            if ($express) {
-                $o2 = Order::create([
-                    'customer_name'   => 'Nadia Kusuma',
-                    'whatsapp_number' => '082199000404',
-                    'total_price'     => $express->price_per_unit * 3,
-                    'status'          => 'Dicuci',
-                ]);
-                $o2->orderDetails()->create([
-                    'service_id'    => $express->id,
-                    'qty_or_weight' => 3,
-                    'subtotal'      => $express->price_per_unit * 3,
-                ]);
-            }
-
-            if ($reguler) {
-                $o3 = Order::create([
-                    'customer_name'   => 'Andi Saputra',
-                    'whatsapp_number' => '081234500101',
-                    'total_price'     => $reguler->price_per_unit * 4,
-                    'status'          => 'Selesai',
-                ]);
-                $o3->orderDetails()->create([
-                    'service_id'    => $reguler->id,
-                    'qty_or_weight' => 4,
-                    'subtotal'      => $reguler->price_per_unit * 4,
-                ]);
-            }
+        foreach ((array) ($snapshot['users'] ?? []) as $u) {
+            if (! is_array($u)) continue;
+            DB::table('users')->insert([
+                'id' => $u['id'],
+                'name' => $u['name'],
+                'email' => $u['email'],
+                'email_verified_at' => $u['email_verified_at'] ?? now(),
+                'password' => $u['password'],
+                'remember_token' => $u['remember_token'] ?? null,
+                'is_admin' => (bool) ($u['is_admin'] ?? false),
+                'role' => $u['role'] ?? 'customer',
+                'avatar' => $u['avatar'] ?? null,
+                'created_at' => $u['created_at'] ?? now(),
+                'updated_at' => $u['updated_at'] ?? now(),
+            ]);
         }
+
+        foreach ((array) ($snapshot['services'] ?? []) as $s) {
+            if (! is_array($s)) continue;
+            DB::table('services')->insert([
+                'id' => $s['id'],
+                'service_name' => $s['service_name'],
+                'category' => $s['category'],
+                'price_per_unit' => $s['price_per_unit'],
+                'unit_type' => $s['unit_type'],
+                'description' => $s['description'] ?? null,
+                'created_at' => $s['created_at'] ?? now(),
+                'updated_at' => $s['updated_at'] ?? now(),
+            ]);
+        }
+
+        foreach ((array) ($snapshot['orders'] ?? []) as $o) {
+            if (! is_array($o)) continue;
+            DB::table('orders')->insert([
+                'id' => $o['id'],
+                'customer_name' => $o['customer_name'],
+                'whatsapp_number' => $o['whatsapp_number'],
+                'total_price' => $o['total_price'],
+                'status' => $o['status'],
+                'created_at' => $o['created_at'] ?? now(),
+                'updated_at' => $o['updated_at'] ?? now(),
+            ]);
+        }
+
+        foreach ((array) ($snapshot['order_details'] ?? []) as $d) {
+            if (! is_array($d)) continue;
+            DB::table('order_details')->insert([
+                'id' => $d['id'],
+                'order_id' => $d['order_id'],
+                'service_id' => $d['service_id'],
+                'qty_or_weight' => $d['qty_or_weight'],
+                'subtotal' => $d['subtotal'],
+                'created_at' => $d['created_at'] ?? now(),
+                'updated_at' => $d['updated_at'] ?? now(),
+            ]);
+        }
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
     }
 }
