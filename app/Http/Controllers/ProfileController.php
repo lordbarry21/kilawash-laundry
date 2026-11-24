@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class ProfileController extends Controller
@@ -21,7 +22,8 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $request->validate([
-            'avatar' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'avatar_data' => ['nullable', 'string', 'max:450000'],
+            'avatar'      => ['nullable', 'file', 'max:4096'],
         ]);
 
         $user = $request->user();
@@ -33,10 +35,35 @@ class ProfileController extends Controller
 
         if ($request->boolean('remove_avatar')) {
             $user->avatar = null;
+        } elseif ($request->filled('avatar_data')) {
+            $dataUri = trim((string) $request->input('avatar_data'));
+
+            if (! preg_match('/^data:image\/(jpeg|jpg|png|webp);base64,([A-Za-z0-9+\/=]+)$/', $dataUri, $matches)) {
+                throw ValidationException::withMessages([
+                    'avatar' => 'Format foto profil tidak valid. Gunakan gambar JPG, PNG, atau WebP.',
+                ]);
+            }
+
+            $decoded = base64_decode($matches[2], true);
+            if ($decoded === false || strlen($decoded) < 32) {
+                throw ValidationException::withMessages([
+                    'avatar' => 'Data gambar rusak. Silakan pilih foto lain.',
+                ]);
+            }
+
+            $user->avatar = $dataUri;
         } elseif ($request->hasFile('avatar')) {
             $file = $request->file('avatar');
-            $mime = $file->getMimeType() ?: 'image/jpeg';
-            $user->avatar = 'data:' . $mime . ';base64,' . base64_encode((string) file_get_contents($file->getRealPath()));
+            $path = $file->getRealPath();
+            $info = $path ? @getimagesize($path) : false;
+
+            if (! is_array($info) || ! in_array($info['mime'] ?? '', ['image/jpeg', 'image/png', 'image/webp'], true)) {
+                throw ValidationException::withMessages([
+                    'avatar' => 'File harus berupa gambar JPG, PNG, atau WebP.',
+                ]);
+            }
+
+            $user->avatar = 'data:' . $info['mime'] . ';base64,' . base64_encode((string) file_get_contents($path));
         }
 
         $user->save();

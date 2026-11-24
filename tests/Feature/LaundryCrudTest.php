@@ -76,5 +76,23 @@ class LaundryCrudTest extends TestCase
         ]);
         $resStatus->assertStatus(302);
         $this->assertDatabaseHas('orders', ['id' => $order->id, 'status' => 'Dicuci']);
+
+        // 7. Upload & remove profile avatar via compressed avatar_data
+        $tinyPng = 'data:image/png;base64,' . base64_encode(str_repeat('A', 64));
+        $resAvatar = $this->actingAs($admin)->patch('/profile', [
+            'name' => 'Bari Achmad (Admin)',
+            'email' => 'admin@gmail.com',
+            'avatar_data' => $tinyPng,
+        ]);
+        $resAvatar->assertRedirect('/profile');
+        $this->assertEquals($tinyPng, $admin->fresh()->avatar);
+
+        $resRemove = $this->actingAs($admin)->patch('/profile', [
+            'name' => 'Bari Achmad (Admin)',
+            'email' => 'admin@gmail.com',
+            'remove_avatar' => '1',
+        ]);
+        $resRemove->assertRedirect('/profile');
+        $this->assertNull($admin->fresh()->avatar);
     }
 }
