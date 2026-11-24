@@ -43,7 +43,7 @@
                     @endif
                 </div>
 
-                <div class="w-full max-w-[380px] mx-auto py-8">
+                <div class="kw-reveal w-full max-w-[380px] mx-auto py-8" style="--stagger: 60ms;">
                     {{ $slot }}
                 </div>
 
@@ -53,7 +53,7 @@
             <!-- Sisi Kanan: Full-Bleed Edge-to-Edge Editorial Laundry Photo (Zero Outer Padding, Zero Rounded Frame) -->
             <section class="hidden lg:flex lg:col-span-7 xl:col-span-7 relative overflow-hidden bg-[#141416] text-white p-10 xl:p-14 flex-col justify-between min-h-screen">
                 <img src="{{ asset('images/laundry-hero.jpg') }}" alt="" fetchpriority="high"
-                     class="absolute inset-0 w-full h-full object-cover object-center z-0">
+                     class="kw-hero-img absolute inset-0 w-full h-full object-cover object-center z-0">
                 <div class="absolute inset-0 z-10"
                      style="background: linear-gradient(180deg, rgba(16,18,22,0.34) 0%, rgba(16,18,22,0.22) 40%, rgba(16,18,22,0.82) 78%, rgba(16,18,22,0.94) 100%);"></div>
 

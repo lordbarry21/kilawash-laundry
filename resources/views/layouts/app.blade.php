@@ -46,7 +46,7 @@
                     </a>
                 </header>
 
-                <main class="flex-1 min-w-0">
+                <main class="kw-vt-main flex-1 min-w-0">
                     {{ $slot }}
                 </main>
             </div>

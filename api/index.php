@@ -3,16 +3,18 @@
  * ============================================================================
  * FILE: api/index.php
  * FUNGSI: Entrypoint Laravel untuk deployment serverless Vercel (`vercel-php@0.7.4`).
- *         - Menyiapkan /tmp/storage yang writable untuk Blade views, cache, logs.
- *         - Menggunakan Firebase Realtime Database (`laundry-asas/laravel_db.json`)
- *           sebagai sumber data utama (cloud persistence) tanpa hardcode data permanen.
+ *         - Setiap request memakai file SQLite terisolasi di /tmp (bebas lock race).
+ *         - Menutup handle PDO sebelum Laravel boot agar transaksi tulis (PUT/POST/DELETE)
+ *           tidak pernah terkena error SQLite "database is locked".
+ *         - Mensinkronkan seluruh perubahan langsung ke Firebase Realtime Database
+ *           (`laundry-asas/laravel_db.json`) setelah Laravel selesai memproses request.
  * ============================================================================
  */
 
 declare(strict_types=1);
 
 $firebaseUrl = rtrim((string) (getenv('FIREBASE_DB_URL') ?: 'https://laundry-asas-default-rtdb.asia-southeast1.firebasedatabase.app'), '/');
-$sqlitePath  = '/tmp/db_laundry_express.sqlite';
+$sqlitePath  = '/tmp/kw_' . getmypid() . '_' . str_replace('.', '', uniqid('', true)) . '.sqlite';
 
 // 1. Siapkan direktori writable di /tmp untuk Laravel serverless
 foreach ([
@@ -28,26 +30,26 @@ foreach ([
     }
 }
 
-// 2. Konfigurasi env serverless (cookie session + array cache + SQLite synced with Firebase RTDB)
+// 2. Konfigurasi env serverless
 $serverlessEnv = [
-    'APP_NAME'             => 'KilaWash',
-    'APP_ENV'              => 'production',
-    'APP_DEBUG'            => 'false',
-    'APP_KEY'              => getenv('APP_KEY') ?: 'base64:DxbTzwVyPbLT2sJs8qIfdNbRr+UQfV76tere9Sy+fhc=',
-    'APP_URL'              => 'https://' . ($_SERVER['HTTP_HOST'] ?? 'laundry.barrydev.icu'),
-    'FIREBASE_DB_URL'      => $firebaseUrl,
-    'DB_CONNECTION'        => getenv('DB_HOST') ? 'mysql' : 'sqlite',
-    'DB_DATABASE'          => getenv('DB_HOST') ? (string) getenv('DB_DATABASE') : $sqlitePath,
-    'SESSION_DRIVER'       => 'cookie',
-    'SESSION_SECURE_COOKIE'=> 'true',
-    'CACHE_STORE'          => 'array',
-    'LOG_CHANNEL'          => 'stderr',
-    'VIEW_COMPILED_PATH'   => '/tmp/storage/framework/views',
-    'APP_SERVICES_CACHE'   => '/tmp/bootstrap/cache/services.php',
-    'APP_PACKAGES_CACHE'   => '/tmp/bootstrap/cache/packages.php',
-    'APP_CONFIG_CACHE'     => '/tmp/bootstrap/cache/config.php',
-    'APP_ROUTES_CACHE'     => '/tmp/bootstrap/cache/routes-v7.php',
-    'APP_EVENTS_CACHE'     => '/tmp/bootstrap/cache/events.php',
+    'APP_NAME'              => 'KilaWash',
+    'APP_ENV'               => 'production',
+    'APP_DEBUG'             => 'false',
+    'APP_KEY'               => getenv('APP_KEY') ?: 'base64:DxbTzwVyPbLT2sJs8qIfdNbRr+UQfV76tere9Sy+fhc=',
+    'APP_URL'               => 'https://' . ($_SERVER['HTTP_HOST'] ?? 'laundry.barrydev.icu'),
+    'FIREBASE_DB_URL'       => $firebaseUrl,
+    'DB_CONNECTION'         => getenv('DB_HOST') ? 'mysql' : 'sqlite',
+    'DB_DATABASE'           => getenv('DB_HOST') ? (string) getenv('DB_DATABASE') : $sqlitePath,
+    'SESSION_DRIVER'        => 'cookie',
+    'SESSION_SECURE_COOKIE' => 'true',
+    'CACHE_STORE'           => 'array',
+    'LOG_CHANNEL'           => 'stderr',
+    'VIEW_COMPILED_PATH'    => '/tmp/storage/framework/views',
+    'APP_SERVICES_CACHE'    => '/tmp/bootstrap/cache/services.php',
+    'APP_PACKAGES_CACHE'    => '/tmp/bootstrap/cache/packages.php',
+    'APP_CONFIG_CACHE'      => '/tmp/bootstrap/cache/config.php',
+    'APP_ROUTES_CACHE'      => '/tmp/bootstrap/cache/routes-v7.php',
+    'APP_EVENTS_CACHE'      => '/tmp/bootstrap/cache/events.php',
 ];
 
 foreach ($serverlessEnv as $k => $v) {
@@ -85,12 +87,10 @@ $fbRequest = static function (string $method, string $path, ?array $payload = nu
     return null;
 };
 
-// 4. Hydrate SQLite langsung dari Firebase Realtime Database (Single Source of Truth)
+// 4. Hydrate SQLite terisolasi dari Firebase Realtime Database lalu TUTUP PDO segera
 $useFirebaseSqlite = ! getenv('DB_HOST');
 if ($useFirebaseSqlite) {
-    if (! is_file($sqlitePath)) {
-        touch($sqlitePath);
-    }
+    touch($sqlitePath);
 
     $pdo = new PDO('sqlite:' . $sqlitePath, null, null, [
         PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -98,7 +98,7 @@ if ($useFirebaseSqlite) {
     ]);
     $pdo->exec('PRAGMA foreign_keys = OFF;');
     $pdo->exec("
-        CREATE TABLE IF NOT EXISTS users (
+        CREATE TABLE users (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             email TEXT NOT NULL UNIQUE,
@@ -111,7 +111,7 @@ if ($useFirebaseSqlite) {
             created_at DATETIME NULL,
             updated_at DATETIME NULL
         );
-        CREATE TABLE IF NOT EXISTS services (
+        CREATE TABLE services (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             service_name TEXT NOT NULL,
             category TEXT NOT NULL,
@@ -121,7 +121,7 @@ if ($useFirebaseSqlite) {
             created_at DATETIME NULL,
             updated_at DATETIME NULL
         );
-        CREATE TABLE IF NOT EXISTS orders (
+        CREATE TABLE orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             customer_name TEXT NOT NULL,
             whatsapp_number TEXT NOT NULL,
@@ -130,7 +130,7 @@ if ($useFirebaseSqlite) {
             created_at DATETIME NULL,
             updated_at DATETIME NULL
         );
-        CREATE TABLE IF NOT EXISTS order_details (
+        CREATE TABLE order_details (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             order_id INTEGER NOT NULL,
             service_id INTEGER NOT NULL,
@@ -144,7 +144,6 @@ if ($useFirebaseSqlite) {
     ");
 
     $snapshot = $fbRequest('GET', 'laravel_db.json');
-    $pdo->exec('DELETE FROM order_details; DELETE FROM orders; DELETE FROM services; DELETE FROM users;');
 
     if (is_array($snapshot)) {
         $uStmt = $pdo->prepare('INSERT INTO users (id, name, email, email_verified_at, password, remember_token, is_admin, role, avatar, created_at, updated_at) VALUES (:id,:name,:email,:email_verified_at,:password,:remember_token,:is_admin,:role,:avatar,:created_at,:updated_at)');
@@ -207,32 +206,17 @@ if ($useFirebaseSqlite) {
                 'updated_at' => $r['updated_at'] ?? date('Y-m-d H:i:s'),
             ]);
         }
-    }
-    $pdo->exec('PRAGMA foreign_keys = ON;');
 
-    // 5. Setelah aksi tulis (POST/PUT/PATCH/DELETE), simpan otomatis perubahan ke Firebase RTDB
-    if (in_array(strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'), ['POST', 'PUT', 'PATCH', 'DELETE'], true)) {
-        register_shutdown_function(static function () use ($sqlitePath, $fbRequest): void {
-            try {
-                $p = new PDO('sqlite:' . $sqlitePath, null, null, [
-                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
-                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-                ]);
-                $fbRequest('PUT', 'laravel_db.json', [
-                    'updated_at'    => date('Y-m-d H:i:s'),
-                    'users'         => $p->query('SELECT * FROM users ORDER BY id')->fetchAll(),
-                    'services'      => $p->query('SELECT * FROM services ORDER BY id')->fetchAll(),
-                    'orders'        => $p->query('SELECT * FROM orders ORDER BY id')->fetchAll(),
-                    'order_details' => $p->query('SELECT * FROM order_details ORDER BY id')->fetchAll(),
-                ]);
-            } catch (Throwable) {
-                // Jangan ganggu respons HTTP jika sync gagal
-            }
-        });
+        // Bebaskan seluruh prepared statement sebelum menutup PDO
+        $uStmt = $sStmt = $oStmt = $dStmt = null;
     }
+
+    $pdo->exec('PRAGMA foreign_keys = ON;');
+    // PENTING: Tutup koneksi PDO sepenuhnya sebelum Laravel membuka SQLite untuk transaksi tulis
+    $pdo = null;
 }
 
-// 6. Boot Laravel secara eksplisit dengan writable storagePath di /tmp/storage
+// 5. Boot Laravel secara eksplisit dengan writable storagePath di /tmp/storage
 define('LARAVEL_START', microtime(true));
 
 require __DIR__ . '/../vendor/autoload.php';
@@ -241,4 +225,40 @@ require __DIR__ . '/../vendor/autoload.php';
 $app = require_once __DIR__ . '/../bootstrap/app.php';
 $app->useStoragePath('/tmp/storage');
 
-$app->handleRequest(\Illuminate\Http\Request::capture());
+$isWriteRequest = in_array(strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET'), ['POST', 'PUT', 'PATCH', 'DELETE'], true);
+
+try {
+    $app->handleRequest(\Illuminate\Http\Request::capture());
+} finally {
+    if ($useFirebaseSqlite) {
+        try {
+            if ($app->bound('db')) {
+                $app->make('db')->disconnect();
+            }
+            $status = http_response_code();
+            if ($isWriteRequest && ($status === false || $status < 400) && is_file($sqlitePath)) {
+                $p = new PDO('sqlite:' . $sqlitePath, null, null, [
+                    PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                ]);
+                $users = $p->query('SELECT * FROM users ORDER BY id')->fetchAll();
+                if (! empty($users)) {
+                    $fbRequest('PUT', 'laravel_db.json', [
+                        'updated_at'    => date('Y-m-d H:i:s'),
+                        'users'         => $users,
+                        'services'      => $p->query('SELECT * FROM services ORDER BY id')->fetchAll(),
+                        'orders'        => $p->query('SELECT * FROM orders ORDER BY id')->fetchAll(),
+                        'order_details' => $p->query('SELECT * FROM order_details ORDER BY id')->fetchAll(),
+                    ]);
+                }
+                $p = null;
+            }
+        } catch (Throwable $e) {
+            error_log('FIREBASE_SYNC_ERR: ' . $e->getMessage());
+        } finally {
+            @unlink($sqlitePath);
+            @unlink($sqlitePath . '-wal');
+            @unlink($sqlitePath . '-shm');
+        }
+    }
+}

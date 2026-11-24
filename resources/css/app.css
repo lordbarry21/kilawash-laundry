@@ -269,20 +269,160 @@ dialog.kw-modal::backdrop {
   }
 }
 
-/* Subtle Hero Settle */
-@keyframes kw-hero-settle {
-  from { transform: scale(1.035); }
-  to   { transform: scale(1); }
-}
+/* ============================================================================
+ * Smooth App-Like Motion & Cross-Document View Transitions
+ * (modern-web-guidance: cross-document-transitions + motion)
+ * Strictly opted-in via prefers-reduced-motion: no-preference so static states
+ * remain fully visible when reduced motion is enabled.
+ * ============================================================================ */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
 
-.kw-hero-img {
-  animation: kw-hero-settle 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
+  .kw-vt-sidebar {
+    view-transition-name: app-sidebar;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  .kw-hero-img {
+  .kw-vt-main {
+    view-transition-name: app-main;
+  }
+
+  ::view-transition-old(app-sidebar),
+  ::view-transition-new(app-sidebar) {
     animation: none;
   }
+
+  ::view-transition-old(app-main) {
+    animation: kw-vt-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
+  }
+
+  ::view-transition-new(app-main) {
+    animation: kw-vt-in 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @keyframes kw-vt-out {
+    from { opacity: 1; transform: translateY(0); }
+    to   { opacity: 0; transform: translateY(-6px); }
+  }
+
+  @keyframes kw-vt-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes kw-reveal-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px) scale(0.992);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .kw-reveal {
+    animation: kw-reveal-up 520ms cubic-bezier(0.16, 1, 0.3, 1) var(--stagger, 0ms) both;
+  }
+
+  @keyframes kw-bar-rise {
+    from {
+      opacity: 0.25;
+      transform: scaleY(0.06);
+    }
+    to {
+      opacity: 1;
+      transform: scaleY(1);
+    }
+  }
+
+  .kw-bar-rise {
+    transform-origin: bottom center;
+    animation: kw-bar-rise 720ms cubic-bezier(0.16, 1, 0.3, 1) var(--bar-delay, 160ms) both;
+  }
+
+  @keyframes kw-bar-wipe {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .kw-bar-wipe {
+    transform-origin: left center;
+    animation: kw-bar-wipe 780ms cubic-bezier(0.16, 1, 0.3, 1) var(--bar-delay, 220ms) both;
+  }
+
+  @keyframes kw-row-fade {
+    from {
+      opacity: 0;
+      transform: translateX(-6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .kw-row-in {
+    animation: kw-row-fade 420ms cubic-bezier(0.16, 1, 0.3, 1) var(--row-delay, 0ms) both;
+  }
+
+  @keyframes kw-hero-settle {
+    from { transform: scale(1.045); }
+    to   { transform: scale(1); }
+  }
+
+  .kw-hero-img {
+    animation: kw-hero-settle 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+/* Interactive Studio Cursor Spotlight & Tactile Elevation */
+.kw-spotlight {
+  position: relative;
+  overflow: hidden;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1),
+              border-color 200ms ease;
+}
+
+.kw-spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 280ms ease;
+  background: radial-gradient(
+    280px circle at var(--mx, 50%) var(--my, 50%),
+    rgba(37, 99, 235, 0.065),
+    transparent 65%
+  );
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .kw-spotlight:hover {
+    transform: translateY(-2px);
+    border-color: rgba(20, 20, 22, 0.14);
+    box-shadow: 0 14px 32px -12px rgba(20, 20, 22, 0.09), 0 2px 6px rgba(20, 20, 22, 0.03);
+  }
+
+  .kw-spotlight:hover::before {
+    opacity: 1;
+  }
+}
+
+.kw-ring-progress {
+  transition: stroke-dashoffset 1000ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-ink:active,
+.btn-soft:active {
+  transform: scale(0.975);
 }
 
 @media print {

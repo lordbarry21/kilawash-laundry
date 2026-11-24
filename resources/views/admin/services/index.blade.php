@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-        <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="kw-reveal flex flex-wrap items-end justify-between gap-4" style="--stagger: 0ms;">
             <div>
                 <h1 class="text-3xl sm:text-[36px] font-medium tracking-[-0.04em] text-[#141416] leading-tight">Data Layanan</h1>
                 <p class="text-sm text-[#71717a] mt-1">Kelola katalog layanan cuci kiloan, satuan, dan express beserta tarif per unit.</p>
@@ -35,7 +35,7 @@
             </div>
         @endif
 
-        <section class="bento-card overflow-hidden">
+        <section class="bento-card kw-reveal overflow-hidden" style="--stagger: 90ms;">
             <div class="kw-table-wrap" tabindex="0" role="region" aria-label="Daftar master data layanan">
                 <table class="kw-table-responsive w-full text-left border-collapse text-sm">
                     <thead class="bg-[#fafafa] text-[#71717a] text-xs font-medium">

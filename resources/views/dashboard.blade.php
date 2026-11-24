@@ -7,7 +7,7 @@
         $pctSelesai  = $totalOrders > 0 ? (int) round(($stats['completed_orders'] / $safeTotal) * 100) : 0;
         $avgOrder    = $totalOrders > 0 ? (int) round($stats['total_revenue'] / $safeTotal) : 0;
 
-        $totalCatRev = max(1, array_sum(array_column($categoryStats, 'revenue')));
+        $totalCatRev  = max(1, array_sum(array_column($categoryStats, 'revenue')));
         $maxStatusVal = max(1, $stats['total_orders'], $stats['antrean_orders'], $stats['dicuci_orders'], $stats['completed_orders']);
 
         $statusSeries = [
@@ -29,13 +29,13 @@
 
     <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         @if(session('success'))
-            <div role="status" class="rounded-2xl bg-[#dcfce7] border border-[#16a34a]/20 text-[#14532d] px-5 py-3.5 text-sm font-medium">
+            <div role="status" class="kw-reveal rounded-2xl bg-[#dcfce7] border border-[#16a34a]/20 text-[#14532d] px-5 py-3.5 text-sm font-medium">
                 {{ session('success') }}
             </div>
         @endif
 
         <!-- Top Overview Bar -->
-        <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="kw-reveal flex flex-wrap items-end justify-between gap-4" style="--stagger: 0ms;">
             <div>
                 <div class="flex items-center gap-3">
                     <h1 class="text-3xl sm:text-[34px] font-semibold tracking-[-0.035em] text-[#141416] leading-none">Overview</h1>
@@ -56,9 +56,9 @@
             </div>
         </div>
 
-        <!-- ROW 1: 4 Minimalist Executive KPI Cards -->
+        <!-- ROW 1: 4 Minimalist Executive KPI Cards (Staggered Reveal + Spotlight + CountUp) -->
         <section class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <article class="bento-card p-5 flex flex-col justify-between gap-3">
+            <article class="bento-card kw-reveal kw-spotlight p-5 flex flex-col justify-between gap-3" style="--stagger: 60ms;">
                 <div class="flex items-center justify-between gap-2">
                     <span class="text-xs font-medium text-[#71717a]">Total Pesanan</span>
                     <span class="w-8 h-8 rounded-lg bg-[#f4f4f6] text-[#141416] inline-flex items-center justify-center">
@@ -66,12 +66,12 @@
                     </span>
                 </div>
                 <div class="flex items-baseline justify-between gap-2">
-                    <p class="text-3xl font-semibold tracking-[-0.03em] text-[#141416] tabular">{{ $stats['total_orders'] }}</p>
+                    <p class="text-3xl font-semibold tracking-[-0.03em] text-[#141416] tabular" data-countup="{{ $stats['total_orders'] }}" data-duration="650">{{ $stats['total_orders'] }}</p>
                     <span class="text-[11px] font-medium text-[#71717a] font-mono-num">{{ $services->count() }} layanan</span>
                 </div>
             </article>
 
-            <article class="bento-card p-5 flex flex-col justify-between gap-3">
+            <article class="bento-card kw-reveal kw-spotlight p-5 flex flex-col justify-between gap-3" style="--stagger: 110ms;">
                 <div class="flex items-center justify-between gap-2">
                     <span class="text-xs font-medium text-[#71717a]">Antrean Masuk</span>
                     <span class="w-8 h-8 rounded-lg bg-[#fef3c7]/70 text-[#b45309] inline-flex items-center justify-center">
@@ -79,12 +79,12 @@
                     </span>
                 </div>
                 <div class="flex items-baseline justify-between gap-2">
-                    <p class="text-3xl font-semibold tracking-[-0.03em] text-[#141416] tabular">{{ $stats['antrean_orders'] }}</p>
-                    <span class="px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e] text-[11px] font-semibold font-mono-num">{{ $pctAntrean }}%</span>
+                    <p class="text-3xl font-semibold tracking-[-0.03em] text-[#141416] tabular" data-countup="{{ $stats['antrean_orders'] }}" data-duration="650">{{ $stats['antrean_orders'] }}</p>
+                    <span class="px-2 py-0.5 rounded-full bg-[#fef3c7] text-[#92400e] text-[11px] font-semibold font-mono-num" data-countup="{{ $pctAntrean }}" data-suffix="%" data-duration="700">{{ $pctAntrean }}%</span>
                 </div>
             </article>
 
-            <article class="bento-card p-5 flex flex-col justify-between gap-3">
+            <article class="bento-card kw-reveal kw-spotlight p-5 flex flex-col justify-between gap-3" style="--stagger: 160ms;">
                 <div class="flex items-center justify-between gap-2">
                     <span class="text-xs font-medium text-[#71717a]">Sedang Dicuci</span>
                     <span class="w-8 h-8 rounded-lg bg-[#dbeafe]/80 text-[#1d4ed8] inline-flex items-center justify-center">
@@ -92,12 +92,12 @@
                     </span>
                 </div>
                 <div class="flex items-baseline justify-between gap-2">
-                    <p class="text-3xl font-semibold tracking-[-0.03em] text-[#141416] tabular">{{ $stats['dicuci_orders'] }}</p>
-                    <span class="px-2 py-0.5 rounded-full bg-[#dbeafe] text-[#1e40af] text-[11px] font-semibold font-mono-num">{{ $pctDicuci }}%</span>
+                    <p class="text-3xl font-semibold tracking-[-0.03em] text-[#141416] tabular" data-countup="{{ $stats['dicuci_orders'] }}" data-duration="650">{{ $stats['dicuci_orders'] }}</p>
+                    <span class="px-2 py-0.5 rounded-full bg-[#dbeafe] text-[#1e40af] text-[11px] font-semibold font-mono-num" data-countup="{{ $pctDicuci }}" data-suffix="%" data-duration="700">{{ $pctDicuci }}%</span>
                 </div>
             </article>
 
-            <article class="bento-card p-5 flex flex-col justify-between gap-3">
+            <article class="bento-card kw-reveal kw-spotlight p-5 flex flex-col justify-between gap-3" style="--stagger: 210ms;">
                 <div class="flex items-center justify-between gap-2">
                     <span class="text-xs font-medium text-[#71717a]">Siap Diambil</span>
                     <span class="w-8 h-8 rounded-lg bg-[#dcfce7]/80 text-[#15803d] inline-flex items-center justify-center">
@@ -105,16 +105,16 @@
                     </span>
                 </div>
                 <div class="flex items-baseline justify-between gap-2">
-                    <p class="text-3xl font-semibold tracking-[-0.03em] text-[#141416] tabular">{{ $stats['completed_orders'] }}</p>
-                    <span class="px-2 py-0.5 rounded-full bg-[#dcfce7] text-[#166534] text-[11px] font-semibold font-mono-num">{{ $pctSelesai }}%</span>
+                    <p class="text-3xl font-semibold tracking-[-0.03em] text-[#141416] tabular" data-countup="{{ $stats['completed_orders'] }}" data-duration="650">{{ $stats['completed_orders'] }}</p>
+                    <span class="px-2 py-0.5 rounded-full bg-[#dcfce7] text-[#166534] text-[11px] font-semibold font-mono-num" data-countup="{{ $pctSelesai }}" data-suffix="%" data-duration="700">{{ $pctSelesai }}%</span>
                 </div>
             </article>
         </section>
 
-        <!-- ROW 2: Crisp Executive Analytics Chart (8 cols) + Gross Volume & Completion Ring (4 cols) -->
+        <!-- ROW 2: Crisp Executive Analytics Chart (8 cols) + Gross Volume & Animated Ring (4 cols) -->
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-5">
             <!-- Left 8 Cols: Interactive Precision Analytics Card -->
-            <article x-data="{ tab: 'status' }" class="lg:col-span-8 bento-card p-6 sm:p-7 flex flex-col justify-between gap-6">
+            <article x-data="{ tab: 'status' }" class="lg:col-span-8 bento-card kw-reveal p-6 sm:p-7 flex flex-col justify-between gap-6" style="--stagger: 240ms;">
                 <div class="flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#141416]">Statistik Alur Pesanan</h2>
@@ -125,19 +125,23 @@
                     <div class="inline-flex items-center p-1 rounded-full bg-[#f4f4f6] border border-black/[0.05]">
                         <button type="button" @click="tab = 'status'"
                                 :class="tab === 'status' ? 'bg-white text-[#141416] shadow-sm' : 'text-[#71717a] hover:text-[#141416]'"
-                                class="px-3.5 py-1.5 rounded-full text-xs font-medium transition">
+                                class="px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200">
                             Status Cucian
                         </button>
                         <button type="button" @click="tab = 'kategori'"
                                 :class="tab === 'kategori' ? 'bg-white text-[#141416] shadow-sm' : 'text-[#71717a] hover:text-[#141416]'"
-                                class="px-3.5 py-1.5 rounded-full text-xs font-medium transition">
+                                class="px-3.5 py-1.5 rounded-full text-xs font-medium transition-all duration-200">
                             Omzet Kategori
                         </button>
                     </div>
                 </div>
 
-                <!-- TAB 1: Distribusi Status (Stacked Progress Pipeline + Clean Gridline Column Chart) -->
-                <div x-show="tab === 'status'" class="space-y-6">
+                <!-- TAB 1: Distribusi Status -->
+                <div x-show="tab === 'status'"
+                     x-transition:enter="transition ease-out duration-250"
+                     x-transition:enter-start="opacity-0 translate-y-2"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     class="space-y-6">
                     <!-- Proportional Pipeline Bar -->
                     <div class="space-y-2">
                         <div class="flex items-center justify-between text-xs">
@@ -146,20 +150,19 @@
                         </div>
                         <div class="h-2.5 w-full rounded-full bg-[#f4f4f6] overflow-hidden flex gap-0.5">
                             @if($pctAntrean > 0)
-                                <div class="h-full bg-[#f59e0b] first:rounded-l-full last:rounded-r-full transition-all duration-300" style="width: {{ $pctAntrean }}%;" title="Antrean: {{ $pctAntrean }}%"></div>
+                                <div class="h-full bg-[#f59e0b] kw-bar-wipe first:rounded-l-full last:rounded-r-full" style="width: {{ $pctAntrean }}%; --bar-delay: 200ms;" title="Antrean: {{ $pctAntrean }}%"></div>
                             @endif
                             @if($pctDicuci > 0)
-                                <div class="h-full bg-[#2563eb] first:rounded-l-full last:rounded-r-full transition-all duration-300" style="width: {{ $pctDicuci }}%;" title="Sedang Dicuci: {{ $pctDicuci }}%"></div>
+                                <div class="h-full bg-[#2563eb] kw-bar-wipe first:rounded-l-full last:rounded-r-full" style="width: {{ $pctDicuci }}%; --bar-delay: 280ms;" title="Sedang Dicuci: {{ $pctDicuci }}%"></div>
                             @endif
                             @if($pctSelesai > 0)
-                                <div class="h-full bg-[#16a34a] first:rounded-l-full last:rounded-r-full transition-all duration-300" style="width: {{ $pctSelesai }}%;" title="Selesai: {{ $pctSelesai }}%"></div>
+                                <div class="h-full bg-[#16a34a] kw-bar-wipe first:rounded-l-full last:rounded-r-full" style="width: {{ $pctSelesai }}%; --bar-delay: 360ms;" title="Selesai: {{ $pctSelesai }}%"></div>
                             @endif
                         </div>
                     </div>
 
-                    <!-- Clean Gridline Bar Chart -->
+                    <!-- Clean Gridline Bar Chart with Hover Floating Tooltip -->
                     <div class="relative pt-4">
-                        <!-- Subtle Horizontal Gridlines -->
                         <div class="absolute inset-x-0 top-4 bottom-8 flex flex-col justify-between pointer-events-none">
                             @foreach(['100%', '75%', '50%', '25%', '0%'] as $tick)
                                 <div class="flex items-center gap-3">
@@ -169,19 +172,22 @@
                             @endforeach
                         </div>
 
-                        <!-- Columns -->
                         <div class="relative pl-11 pr-2 grid grid-cols-4 gap-4 sm:gap-8 items-end h-52">
-                            @foreach($statusSeries as $bar)
-                                <div class="h-full flex flex-col justify-end items-center group">
-                                    <div class="w-full flex-1 flex flex-col justify-end items-center pb-2">
-                                        <span class="font-mono-num text-xs font-semibold text-[#141416] mb-1.5">
+                            @foreach($statusSeries as $idx => $bar)
+                                <div class="h-full flex flex-col justify-end items-center group cursor-default">
+                                    <div class="w-full flex-1 flex flex-col justify-end items-center pb-2 relative">
+                                        <!-- Hover Tooltip Pill -->
+                                        <span class="pointer-events-none mb-1 px-2.5 py-1 rounded-full bg-[#141416] text-white font-mono-num text-[10px] font-medium shadow-md opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200 whitespace-nowrap">
+                                            {{ $bar['val'] }} order · {{ $bar['pct'] }}%
+                                        </span>
+                                        <span class="font-mono-num text-xs font-semibold text-[#141416] mb-1.5 group-hover:opacity-0 transition-opacity duration-150">
                                             {{ $bar['val'] }} <span class="text-[10px] font-normal text-[#71717a]">({{ $bar['pct'] }}%)</span>
                                         </span>
-                                        <div class="w-full max-w-[52px] rounded-t-xl transition-all duration-300 group-hover:opacity-90"
-                                             style="height: {{ $bar['h'] }}%; background: linear-gradient(180deg, {{ $bar['from'] }} 0%, {{ $bar['to'] }} 100%); box-shadow: 0 6px 16px -6px {{ $bar['from'] }}66;">
+                                        <div class="kw-bar-rise w-full max-w-[52px] rounded-t-xl transition-transform duration-200 ease-out group-hover:-translate-y-1"
+                                             style="height: {{ $bar['h'] }}%; --bar-delay: {{ 220 + ($idx * 85) }}ms; background: linear-gradient(180deg, {{ $bar['from'] }} 0%, {{ $bar['to'] }} 100%); box-shadow: 0 8px 20px -6px {{ $bar['from'] }}66;">
                                         </div>
                                     </div>
-                                    <div class="pt-2.5 flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[#52525b] truncate max-w-full">
+                                    <div class="pt-2.5 flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[#52525b] group-hover:text-[#141416] transition-colors truncate max-w-full">
                                         <span class="w-2 h-2 rounded-full shrink-0" style="background-color: {{ $bar['dot'] }}"></span>
                                         <span class="truncate">{{ $bar['label'] }}</span>
                                     </div>
@@ -192,7 +198,11 @@
                 </div>
 
                 <!-- TAB 2: Omzet per Kategori -->
-                <div x-show="tab === 'kategori'" style="display:none" class="space-y-6">
+                <div x-show="tab === 'kategori'"
+                     x-transition:enter="transition ease-out duration-250"
+                     x-transition:enter-start="opacity-0 translate-y-2"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     style="display:none" class="space-y-6">
                     <div class="relative pt-4">
                         <div class="absolute inset-x-0 top-4 bottom-8 flex flex-col justify-between pointer-events-none">
                             @foreach(['100%', '75%', '50%', '25%', '0%'] as $tick)
@@ -210,13 +220,13 @@
                                     $sharePct = (int) round(($catData['revenue'] / $totalCatRev) * 100);
                                     $colH = $catData['revenue'] > 0 ? max(18, $catData['percent']) : 4;
                                 @endphp
-                                <div class="h-full flex flex-col justify-end items-center group">
+                                <div class="h-full flex flex-col justify-end items-center group cursor-default">
                                     <div class="w-full flex-1 flex flex-col justify-end items-center pb-2">
                                         <span class="font-mono-num text-xs font-semibold text-[#141416] mb-1.5">
                                             Rp {{ number_format($catData['revenue'], 0, ',', '.') }}
                                         </span>
-                                        <div class="w-full max-w-[64px] rounded-t-xl transition-all duration-300 group-hover:opacity-90"
-                                             style="height: {{ $colH }}%; background: linear-gradient(180deg, {{ $pal['from'] }} 0%, {{ $pal['to'] }} 100%); box-shadow: 0 6px 16px -6px {{ $pal['from'] }}55;">
+                                        <div class="kw-bar-rise w-full max-w-[64px] rounded-t-xl transition-transform duration-200 ease-out group-hover:-translate-y-1"
+                                             style="height: {{ $colH }}%; --bar-delay: {{ 120 + ($loop->index * 90) }}ms; background: linear-gradient(180deg, {{ $pal['from'] }} 0%, {{ $pal['to'] }} 100%); box-shadow: 0 8px 20px -6px {{ $pal['from'] }}55;">
                                         </div>
                                     </div>
                                     <div class="pt-2.5 text-center">
@@ -233,7 +243,7 @@
                 <div class="pt-4 border-t border-black/[0.06] grid grid-cols-3 gap-4 text-xs">
                     <div>
                         <p class="text-[#71717a]">Rata-rata Order</p>
-                        <p class="font-mono-num font-semibold text-[#141416] mt-0.5">Rp {{ number_format($avgOrder, 0, ',', '.') }}</p>
+                        <p class="font-mono-num font-semibold text-[#141416] mt-0.5" data-countup="{{ $avgOrder }}" data-prefix="Rp " data-duration="800">Rp {{ number_format($avgOrder, 0, ',', '.') }}</p>
                     </div>
                     <div>
                         <p class="text-[#71717a]">Cucian Berjalan</p>
@@ -246,18 +256,19 @@
                 </div>
             </article>
 
-            <!-- Right 4 Cols: Gross Volume + Precision Bars + Completion Ring -->
-            <article class="lg:col-span-4 bento-card p-6 sm:p-7 flex flex-col justify-between gap-6">
+            <!-- Right 4 Cols: Gross Volume + Precision Bars + Animated Completion Ring -->
+            <article class="lg:col-span-4 bento-card kw-reveal kw-spotlight p-6 sm:p-7 flex flex-col justify-between gap-6" style="--stagger: 300ms;">
                 <div>
                     <div class="flex items-center justify-between">
                         <h2 class="text-[17px] font-semibold tracking-[-0.02em] text-[#141416]">Gross Volume</h2>
                         <a href="{{ route('admin.report') }}" class="text-xs font-medium text-[#2563eb] hover:underline">Laporan →</a>
                     </div>
-                    <p class="text-4xl sm:text-[40px] font-semibold tracking-[-0.04em] text-[#141416] tabular mt-3 leading-none">
+                    <p class="text-4xl sm:text-[40px] font-semibold tracking-[-0.04em] text-[#141416] tabular mt-3 leading-none"
+                       data-countup="{{ $stats['total_revenue'] }}" data-prefix="Rp " data-duration="850">
                         Rp {{ number_format($stats['total_revenue'], 0, ',', '.') }}
                     </p>
                     <p class="text-xs text-[#71717a] mt-2">
-                        Pendapatan selesai: <strong class="font-mono-num text-[#16a34a]">Rp {{ number_format($stats['completed_revenue'], 0, ',', '.') }}</strong>
+                        Pendapatan selesai: <strong class="font-mono-num text-[#16a34a]" data-countup="{{ $stats['completed_revenue'] }}" data-prefix="Rp " data-duration="900">Rp {{ number_format($stats['completed_revenue'], 0, ',', '.') }}</strong>
                     </p>
                 </div>
 
@@ -274,13 +285,13 @@
                                 <span class="font-mono-num font-semibold text-[#141416]">Rp {{ number_format($catData['revenue'], 0, ',', '.') }}</span>
                             </div>
                             <div class="h-1.5 rounded-full bg-[#f4f4f6] overflow-hidden">
-                                <div class="h-full rounded-full transition-all duration-300" style="width: {{ $sharePct }}%; background-color: {{ $pal['bar'] }};"></div>
+                                <div class="h-full rounded-full kw-bar-wipe" style="width: {{ $sharePct }}%; --bar-delay: {{ 280 + ($loop->index * 110) }}ms; background-color: {{ $pal['bar'] }};"></div>
                             </div>
                         </div>
                     @endforeach
                 </div>
 
-                <!-- Circular Completion Rate Widget -->
+                <!-- Animated Circular Completion Rate Widget -->
                 <div class="pt-4 border-t border-black/[0.06] flex items-center justify-between gap-4">
                     <div class="flex items-center gap-3">
                         <div class="relative w-12 h-12 shrink-0">
@@ -288,10 +299,13 @@
                                 <circle cx="24" cy="24" r="20" fill="none" stroke="#f4f4f6" stroke-width="4.5" />
                                 <circle cx="24" cy="24" r="20" fill="none" stroke="#16a34a" stroke-width="4.5"
                                         stroke-linecap="round"
+                                        class="kw-ring-progress"
                                         stroke-dasharray="{{ number_format($ringCirc, 2, '.', '') }}"
-                                        stroke-dashoffset="{{ number_format($ringOffset, 2, '.', '') }}" />
+                                        stroke-dashoffset="{{ number_format($ringCirc, 2, '.', '') }}"
+                                        data-ring-target="{{ number_format($ringOffset, 2, '.', '') }}" />
                             </svg>
-                            <span class="absolute inset-0 flex items-center justify-center font-mono-num text-[11px] font-semibold text-[#141416]">
+                            <span class="absolute inset-0 flex items-center justify-center font-mono-num text-[11px] font-semibold text-[#141416]"
+                                  data-countup="{{ $stats['completion_rate'] }}" data-suffix="%" data-duration="900">
                                 {{ $stats['completion_rate'] }}%
                             </span>
                         </div>
@@ -304,8 +318,8 @@
             </article>
         </section>
 
-        <!-- ROW 3: Daftar Pesanan Masuk Table Card (With Integrated Search & Clean Filter Toolbar) -->
-        <section class="bento-card overflow-hidden">
+        <!-- ROW 3: Daftar Pesanan Masuk Table Card -->
+        <section class="bento-card kw-reveal overflow-hidden" style="--stagger: 350ms;">
             <div class="px-6 sm:px-7 py-5 border-b border-black/[0.06] flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-2.5">
@@ -317,7 +331,7 @@
                     <p class="text-xs text-[#71717a] mt-0.5">Pantau antrean dan ubah status cucian secara langsung dari Antrean → Dicuci → Selesai</p>
                 </div>
 
-                <!-- Integrated Table Filter Toolbar (Clean single chevron select) -->
+                <!-- Integrated Table Filter Toolbar -->
                 <form method="GET" action="{{ route('dashboard') }}" class="flex flex-wrap sm:flex-nowrap items-center gap-2">
                     <div class="flex items-center gap-2 bg-[#f4f4f6] rounded-xl px-3.5 border border-black/[0.06] focus-within:bg-white focus-within:border-[#2563eb] transition min-w-[210px] flex-1 sm:flex-initial">
                         <svg viewBox="0 0 24 24" class="w-4 h-4 text-[#71717a] shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -360,7 +374,7 @@
                     </thead>
                     <tbody class="divide-y divide-black/[0.05]">
                         @forelse($orders as $order)
-                            <tr class="hover:bg-[#fafafa] transition-colors">
+                            <tr class="kw-row-in hover:bg-[#fafafa] transition-colors" style="--row-delay: {{ min(8, $loop->index) * 45 + 320 }}ms;">
                                 <th scope="row" class="px-6 py-4 font-mono-num font-semibold text-[#141416] whitespace-nowrap">
                                     #{{ str_pad((string) $order->id, 3, '0', STR_PAD_LEFT) }}
                                 </th>

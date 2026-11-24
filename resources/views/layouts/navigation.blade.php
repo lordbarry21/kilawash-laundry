@@ -9,7 +9,7 @@
 
 <!-- Unified Persistent Left Sidebar (Consistent across ALL pages) -->
 <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'"
-       class="fixed lg:sticky top-0 left-0 z-50 h-screen w-[248px] shrink-0 bg-white border-r border-black/[0.07] flex flex-col justify-between p-4 transition-transform duration-200 ease-out no-print">
+       class="kw-vt-sidebar fixed lg:sticky top-0 left-0 z-50 h-screen w-[248px] shrink-0 bg-white border-r border-black/[0.07] flex flex-col justify-between p-4 transition-transform duration-200 ease-out no-print">
 
     <!-- Top Brand & Flat Intuitive Navigation -->
     <div class="space-y-6 overflow-y-auto">

@@ -1,7 +1,7 @@
 <x-app-layout>
     <div class="py-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <!-- Page Header -->
-        <div class="flex flex-wrap items-end justify-between gap-4">
+        <div class="kw-reveal flex flex-wrap items-end justify-between gap-4" style="--stagger: 0ms;">
             <div>
                 <h1 class="text-3xl sm:text-[34px] font-semibold tracking-[-0.035em] text-[#141416] leading-none">
                     Buat Pesanan
@@ -44,7 +44,7 @@
             @csrf
 
             <!-- Left (8 cols): Clean Service Catalog with Inline Category Filter Tabs -->
-            <section class="xl:col-span-8 bento-card overflow-hidden">
+            <section class="xl:col-span-8 bento-card kw-reveal overflow-hidden" style="--stagger: 90ms;">
                 <div class="px-6 py-4 border-b border-black/[0.06] flex flex-wrap items-center justify-between gap-3">
                     <div>
                         <h2 class="text-[16px] font-semibold tracking-[-0.02em] text-[#141416]">Pilih Layanan</h2>
@@ -114,7 +114,7 @@
             </section>
 
             <!-- Right (4 cols): Sticky Checkout Summary Panel -->
-            <aside class="xl:col-span-4 xl:sticky xl:top-7 bento-card p-6 space-y-5">
+            <aside class="xl:col-span-4 xl:sticky xl:top-7 bento-card kw-reveal kw-spotlight p-6 space-y-5" style="--stagger: 160ms;">
                 <div>
                     <h2 class="text-[16px] font-semibold tracking-[-0.02em] text-[#141416]">Ringkasan Pesanan</h2>
                     <p class="text-xs text-[#71717a] mt-0.5">Isi nama &amp; nomor WhatsApp pelanggan</p>

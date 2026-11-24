@@ -4,6 +4,7 @@ use App\Http\Controllers\ErdController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ServiceController;
+use App\Models\Service;
 use Illuminate\Support\Facades\Route;
 
 // 1. Entry Point Utama: Wajib login terlebih dahulu sebelum masuk aplikasi
@@ -42,6 +43,7 @@ Route::middleware(['auth', 'verified', 'can:operate-laundry'])->group(function (
 // 4. Area Manajemen Tarif Layanan (Khusus Admin — Gate: manage-laundry)
 Route::middleware(['auth', 'verified', 'can:manage-laundry'])->group(function () {
     Route::resource('/admin/services', ServiceController::class)->except(['index', 'show']);
+    Route::get('/admin/services/{service}', fn (Service $service) => redirect()->route('services.edit', $service))->name('services.show');
 });
 
 require __DIR__ . '/auth.php';
