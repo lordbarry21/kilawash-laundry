@@ -3,29 +3,33 @@
 @tailwind utilities;
 
 /* ============================================================================
- * Design System Tokens — cool-white-slate (design-taste-frontend)
- * + Modern Web Platform Patterns (modern-web-guidance)
+ * Design System — Zentra-grade Studio Bento UI (design-taste-frontend)
+ * + Modern Web Platform Primitives (modern-web-guidance)
+ * Zero violet/lavender. Crisp neutral canvas, pure white bento cards,
+ * near-black ink pills, cobalt blue & emerald hatched data visuals.
  * ============================================================================ */
 :root {
-  --bg:            #f7f9fa;
-  --surface:       #ecf0f2;
+  --canvas:        #f4f4f6;
   --card:          #ffffff;
-  --ink:           #1f3038;
-  --muted:         #51656f;
-  --hairline:      rgba(31, 48, 56, 0.13);
-  --accent:        #0d7480;
-  --accent-hover:  #0a5d67;
-  --accent-soft:   #e3f2f4;
-  --accent-ink:    #07474f;
-  --danger:        #be123c;
-  --font-sans:     'Host Grotesk', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-mono:     'JetBrains Mono', ui-monospace, 'Cascadia Code', monospace;
+  --ink:           #141416;
+  --ink-soft:      #27272a;
+  --muted:         #71717a;
+  --hairline:      rgba(20, 20, 22, 0.075);
+  --hairline-mid:  rgba(20, 20, 22, 0.14);
+  --cobalt:        #2563eb;
+  --cobalt-dark:   #1d4ed8;
+  --emerald:       #16a34a;
+  --amber:         #d97706;
+  --rose:          #e11d48;
+  --font-sans:     'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:     'JetBrains Mono', ui-monospace, monospace;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--bg);
+  background-color: var(--canvas);
   color: var(--ink);
+  -webkit-font-smoothing: antialiased;
 }
 
 .font-mono-num {
@@ -33,16 +37,145 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* Native <dialog> modal (modern-web-guidance: dialog & light-dismiss) */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Bento Card Surface */
+.bento-card {
+  background-color: var(--card);
+  border: 1px solid var(--hairline);
+  border-radius: 22px;
+  box-shadow: 0 1px 2px rgba(20, 20, 22, 0.025), 0 8px 24px rgba(20, 20, 22, 0.02);
+}
+
+.bento-card--hover {
+  transition: transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 160ms cubic-bezier(0.2, 0.8, 0.2, 1), border-color 160ms;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bento-card--hover:hover {
+    transform: translateY(-2px);
+    border-color: var(--hairline-mid);
+    box-shadow: 0 12px 30px rgba(20, 20, 22, 0.055);
+  }
+}
+
+/* Zentra-style Diagonal Hatched Data Bars */
+.hatch-cobalt {
+  background-color: #2563eb;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.24) 0px,
+    rgba(255, 255, 255, 0.24) 3px,
+    transparent 3px,
+    transparent 8px
+  );
+}
+
+.hatch-cobalt-soft {
+  background-color: #60a5fa;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.34) 0px,
+    rgba(255, 255, 255, 0.34) 3px,
+    transparent 3px,
+    transparent 8px
+  );
+}
+
+.hatch-emerald {
+  background-color: #22c55e;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.28) 0px,
+    rgba(255, 255, 255, 0.28) 2.5px,
+    transparent 2.5px,
+    transparent 6.5px
+  );
+}
+
+.hatch-amber {
+  background-color: #f59e0b;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.3) 0px,
+    rgba(255, 255, 255, 0.3) 2.5px,
+    transparent 2.5px,
+    transparent 6.5px
+  );
+}
+
+.hatch-rose {
+  background-color: #f43f5e;
+  background-image: repeating-linear-gradient(
+    -45deg,
+    rgba(255, 255, 255, 0.28) 0px,
+    rgba(255, 255, 255, 0.28) 2.5px,
+    transparent 2.5px,
+    transparent 6.5px
+  );
+}
+
+/* Pill Buttons */
+.btn-ink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 20px;
+  border-radius: 999px;
+  background-color: #141416;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 140ms, transform 90ms;
+}
+
+.btn-ink:hover {
+  background-color: #27272a;
+}
+
+.btn-ink:active {
+  transform: scale(0.985);
+}
+
+.btn-soft {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  background-color: #ffffff;
+  color: #141416;
+  border: 1px solid var(--hairline-mid);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 140ms, border-color 140ms, transform 90ms;
+}
+
+.btn-soft:hover {
+  background-color: #f4f4f6;
+  border-color: rgba(20, 20, 22, 0.24);
+}
+
+.btn-soft:active {
+  transform: scale(0.985);
+}
+
+/* Native <dialog> Modal (modern-web-guidance: dialog & light-dismiss) */
 dialog.kw-modal {
   padding: 0;
-  border: 1px solid var(--hairline);
-  border-radius: 16px;
-  background-color: var(--card);
+  border: 1px solid var(--hairline-mid);
+  border-radius: 24px;
+  background-color: #ffffff;
   color: var(--ink);
-  width: min(500px, calc(100vw - 32px));
+  width: min(490px, calc(100vw - 32px));
   max-height: calc(100dvh - 32px);
-  box-shadow: 0 24px 56px rgba(15, 29, 36, 0.22);
+  box-shadow: 0 28px 64px rgba(20, 20, 22, 0.18);
   margin: auto;
   overflow: hidden;
 }
@@ -57,19 +190,19 @@ dialog.kw-modal:modal {
 }
 
 dialog.kw-modal::backdrop {
-  background-color: rgba(15, 29, 36, 0.55);
-  backdrop-filter: blur(2px);
+  background-color: rgba(20, 20, 22, 0.42);
+  backdrop-filter: blur(4px);
   overflow: hidden;
   overscroll-behavior: contain;
 }
 
-/* Modern Form Validation after interaction (:user-invalid) */
+/* Accessible validation after interaction (:user-invalid) */
 :is(input, select, textarea):user-invalid {
-  border-color: var(--danger);
-  background-color: #fff5f6;
+  border-color: var(--rose);
+  background-color: #fff1f2;
 }
 
-/* Responsive Container Table (@container) */
+/* Container-Query Responsive Data Table (modern-web-guidance: responsive-table) */
 .kw-table-wrap {
   overflow-x: auto;
   max-inline-size: 100%;
@@ -98,8 +231,8 @@ dialog.kw-modal::backdrop {
   }
 
   .kw-table-responsive tbody tr {
-    border: 1px solid var(--hairline);
-    border-radius: 12px;
+    border: 1px solid var(--hairline-mid);
+    border-radius: 16px;
     overflow: hidden;
     background: #ffffff;
   }
@@ -110,7 +243,7 @@ dialog.kw-modal::backdrop {
     align-items: flex-start;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px 14px;
+    padding: 11px 16px;
     border-bottom: 1px solid var(--hairline);
     text-align: right;
     width: 100%;
@@ -123,21 +256,21 @@ dialog.kw-modal::backdrop {
   .kw-table-responsive tbody td::before {
     content: attr(data-label);
     font-size: 0.75rem;
-    font-weight: 600;
+    font-weight: 500;
     color: var(--muted);
     text-align: left;
     flex-shrink: 0;
   }
 }
 
-/* Hero subtle entrance settle */
+/* Subtle Hero Settle */
 @keyframes kw-hero-settle {
-  from { transform: scale(1.045); }
+  from { transform: scale(1.035); }
   to   { transform: scale(1); }
 }
 
 .kw-hero-img {
-  animation: kw-hero-settle 900ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: kw-hero-settle 850ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @media (prefers-reduced-motion: reduce) {

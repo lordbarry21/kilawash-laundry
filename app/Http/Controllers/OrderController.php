@@ -92,18 +92,40 @@ class OrderController extends Controller
 
         $orders = $query->get();
 
-        $allOrders = Order::all();
+        $allOrders = Order::with('orderDetails.service')->get();
+        $totalOrders = $allOrders->count();
         $stats = [
-            'total_orders'      => $allOrders->count(),
+            'total_orders'      => $totalOrders,
+            'antrean_orders'    => $allOrders->where('status', 'Antrean')->count(),
+            'dicuci_orders'     => $allOrders->where('status', 'Dicuci')->count(),
             'active_orders'     => $allOrders->whereIn('status', ['Antrean', 'Dicuci'])->count(),
             'completed_orders'  => $allOrders->where('status', 'Selesai')->count(),
             'total_revenue'     => $allOrders->sum('total_price'),
             'completed_revenue' => $allOrders->where('status', 'Selesai')->sum('total_price'),
+            'completion_rate'   => $totalOrders > 0 ? (int) round(($allOrders->where('status', 'Selesai')->count() / $totalOrders) * 100) : 0,
         ];
+
+        $categoryTotals = ['Kiloan' => 0, 'Express' => 0, 'Satuan' => 0];
+        foreach ($allOrders as $o) {
+            foreach ($o->orderDetails as $d) {
+                $cat = $d->service->category ?? 'Kiloan';
+                if (isset($categoryTotals[$cat])) {
+                    $categoryTotals[$cat] += $d->subtotal;
+                }
+            }
+        }
+        $maxCat = max(1, max($categoryTotals));
+        $categoryStats = [];
+        foreach ($categoryTotals as $cat => $val) {
+            $categoryStats[$cat] = [
+                'revenue' => $val,
+                'percent' => $val > 0 ? max(12, (int) round(($val / $maxCat) * 100)) : 0,
+            ];
+        }
 
         $services = Service::withCount('orderDetails')->orderBy('price_per_unit')->get();
 
-        return view('dashboard', compact('orders', 'stats', 'services', 'statusFilter', 'search'));
+        return view('dashboard', compact('orders', 'stats', 'categoryStats', 'services', 'statusFilter', 'search'));
     }
 
     public function updateStatus(Request $request, Order $order): RedirectResponse
